@@ -11,7 +11,7 @@ try:
 except ImportError:
     OpenAI = None
 
-app = FastAPI(title="AI SHARAF API", version="0.2.0")
+app = FastAPI(title="AI SHARAF API", version="0.3.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -35,19 +35,34 @@ class TaskRequest(BaseModel):
 
 @app.get("/")
 def root():
-    return {"name": "AI SHARAF API", "version": "0.2.0", "status": "ok"}
+    return {"name": "AI SHARAF API", "version": "0.3.0", "status": "ok"}
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    provider = "openrouter" if os.getenv("OPENROUTER_API_KEY") else ("openai" if os.getenv("OPENAI_API_KEY") else "none")
+    return {"status": "ok", "ai_provider": provider}
 
 @app.post("/chat")
 def chat(req: ChatRequest):
     if not req.message.strip():
         raise HTTPException(400, "message is required")
-    key = os.getenv("OPENAI_API_KEY")
-    if OpenAI and key:
-        client = OpenAI(api_key=key)
+
+    answer = None
+    openrouter_key = os.getenv("OPENROUTER_API_KEY")
+    openai_key = os.getenv("OPENAI_API_KEY")
+
+    if OpenAI and openrouter_key:
+        client = OpenAI(
+            api_key=openrouter_key,
+            base_url="https://openrouter.ai/api/v1",
+        )
+        response = client.chat.completions.create(
+            model=os.getenv("OPENROUTER_MODEL", "openai/gpt-oss-20b:free"),
+            messages=[{"role": "user", "content": req.message}],
+        )
+        answer = response.choices[0].message.content or "لم تصل إجابة."
+    elif OpenAI and openai_key:
+        client = OpenAI(api_key=openai_key)
         response = client.responses.create(
             model=os.getenv("OPENAI_MODEL", "gpt-5-mini"),
             input=req.message,
@@ -55,7 +70,10 @@ def chat(req: ChatRequest):
         answer = response.output_text
     else:
         answer = "AI SHARAF backend متصل، لكن مفتاح نموذج الذكاء الاصطناعي غير مضبوط على الخادم."
-    memories.setdefault(req.user_id, []).append({"memory_type": "chat", "content": req.message, "confidence": 1.0})
+
+    memories.setdefault(req.user_id, []).append(
+        {"memory_type": "chat", "content": req.message, "confidence": 1.0}
+    )
     return {"answer": answer}
 
 @app.get("/memory/search")
@@ -71,14 +89,25 @@ def knowledge_search(q: str = ""):
     if not q:
         return {"results": knowledge[-50:][::-1]}
     ql = q.lower()
-    return {"results": [x for x in knowledge if ql in (x.get("title", "") + " " + x.get("content", "")).lower()][::-1]}
+    return {
+        "results": [
+            x for x in knowledge
+            if ql in (x.get("title", "") + " " + x.get("content", "")).lower()
+        ][::-1]
+    }
 
 @app.post("/tasks")
 def create_task(req: TaskRequest):
     if not req.objective.strip():
         raise HTTPException(400, "objective is required")
     task_id = str(uuid4())
-    task = {"task_id": task_id, "user_id": req.user_id, "objective": req.objective, "priority": req.priority, "status": "queued"}
+    task = {
+        "task_id": task_id,
+        "user_id": req.user_id,
+        "objective": req.objective,
+        "priority": req.priority,
+        "status": "queued",
+    }
     tasks[task_id] = task
     return task
 
