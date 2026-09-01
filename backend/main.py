@@ -57,7 +57,7 @@ def chat(req: ChatRequest):
             base_url="https://openrouter.ai/api/v1",
         )
         response = client.chat.completions.create(
-            model=os.getenv("OPENROUTER_MODEL", "openai/gpt-oss-20b:free"),
+            model=os.getenv("OPENROUTER_MODEL", "openai/gpt-oss-20b"),
             messages=[{"role": "user", "content": req.message}],
         )
         answer = response.choices[0].message.content or "لم تصل إجابة."
