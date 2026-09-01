@@ -41,6 +41,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 
 private const val API_BASE = "https://ai-sharaf-api.onrender.com"
 private const val USER_ID = "00000000-0000-0000-0000-000000000001"
@@ -292,7 +293,12 @@ fun SettingsScreen() {
 }
 
 object ApiClient {
-    private val client = OkHttpClient()
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(20, TimeUnit.SECONDS)
+        .readTimeout(120, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
+        .callTimeout(150, TimeUnit.SECONDS)
+        .build()
     private val jsonType = "application/json".toMediaType()
 
     suspend fun chat(message: String): String = withContext(Dispatchers.IO) {
