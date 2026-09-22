@@ -94,7 +94,8 @@ try {
     });
     for (const url of urls.slice(0, 40)) {
       const saved = await saveImage(request, url, igDir, "ig");
-      if (/static\.cdninstagram\.com|rsrc\.php/i.test(url)) continue;\n      if (saved) manifest.instagram.media.push(saved);
+      if (/static\.cdninstagram\.com|rsrc\.php/i.test(url)) continue;
+      if (saved) manifest.instagram.media.push(saved);
       if (manifest.instagram.media.length >= 24) break;
     }
     manifest.instagram.status = manifest.instagram.media.length ? "extracted" : "blocked_or_no_media";
@@ -177,7 +178,7 @@ try {
       manifest.talabat.restaurant_url = restaurantUrl;
       const body = clean(await tb.locator("body").innerText());
       manifest.talabat.categories = ["Pies", "Beverages"];
-      manifest.talabat.page_text_sample = body.slice(0, 8000);
+      manifest.talabat.page_text_sample = body.slice(0, 8000);\n      const best = body.match(/Their best selling dishes are (.*?), although/i);\n      if (best) manifest.talabat.best_sellers = best[1].replace(/\\s+and\\s+/i, ", ").split(",").map(clean).filter(Boolean);
 
       const candidates = await tb.locator("body *").evaluateAll(elements => {
         const rows = [];
