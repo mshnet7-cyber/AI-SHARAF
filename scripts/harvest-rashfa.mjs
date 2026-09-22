@@ -180,7 +180,7 @@ try {
       manifest.talabat.categories = ["Pies", "Beverages"];
       manifest.talabat.page_text_sample = body.slice(0, 8000);
       const best = body.match(/Their best selling dishes are (.*?), although/i);
-      if (best) manifest.talabat.best_sellers = best[1].replace(/s+ands+/i, ", ").split(",").map(clean).filter(Boolean);
+      if (best) manifest.talabat.best_sellers = best[1].replace(/\s+and\s+/i, ", ").split(",").map(clean).filter(Boolean);
 
       const candidates = await tb.locator("body *").evaluateAll(elements => {
         const rows = [];
