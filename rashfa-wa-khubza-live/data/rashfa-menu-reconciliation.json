@@ -1,0 +1,49 @@
+{
+  "restaurant": "رشفة وخبزة",
+  "city": "صحار",
+  "street": "شارع كشمير",
+  "instagram": {
+    "status": "blocked_or_error",
+    "media": [],
+    "error": "page.goto: url: expected string, got object"
+  },
+  "talabat_directory": "https://www.talabat.com/oman/restaurants/2601/sohar-sanaiyah?page=22",
+  "harvested_at": "2026-09-22T19:09:08.028Z",
+  "policy": {
+    "exact_source_only": true,
+    "no_guessing": true
+  },
+  "talabat": {
+    "status": "extracted",
+    "restaurant_url": "https://www.talabat.com/oman/rashfa-wa-khobza",
+    "categories": [
+      "Pies",
+      "Beverages",
+      "Pizza",
+      "Breakfast"
+    ],
+    "items": [
+      {
+        "source_text": "4.7\n★\n★\n★\n★\n★\n\n4.7\n\n( 100 Ratings )",
+        "price_omr": "4.7"
+      },
+      {
+        "source_text": "4.7\n★\n★\n★\n★\n★\n\n4.7",
+        "price_omr": "4.7"
+      }
+    ]
+  },
+  "local_assets": {
+    "instagram": [],
+    "menu": [
+      "assets/menu/menu-7dd38f8ee5dbd98a.jpg",
+      "assets/menu/menu-b50206ef0e503450.jpg",
+      "assets/menu/menu-4d48c16b794242be.png",
+      "assets/menu/menu-a8ff7c434ac9966f.jpg",
+      "assets/menu/menu-2bc25a2776ce35b5.jpg",
+      "assets/menu/menu-e9b70e3bd2d70ed6.jpg",
+      "assets/menu/menu-244188ae8fc34b42.jpg",
+      "assets/menu/menu-555459f3f8f35871.jpg"
+    ]
+  }
+}
