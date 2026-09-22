@@ -51,7 +51,7 @@ if (usableItems.length) {
       '</div><strong>' + escapeHtml(price) + " ر.ع.</strong></article>";
   }).join("");
   const localMenu =
-    '<div class="local-menu"><div class="local-menu-head"><span>القائمة المستخرجة من صفحة المطعم</span><a class="btn secondary" href="https://www.talabat.com/oman/rashfa-wa-khobza" target="_blank" rel="noopener noreferrer">طلبات ↗</a></div>' +
+    '<div class="local-menu"><div class="local-menu-head"><span>القائمة المستخرجة من صفحة المطعم</span><a class="btn secondary" href="https://www.talabat.com/oman/restaurants/2601/sohar-sanaiyah?page=22" target="_blank" rel="noopener noreferrer">طلبات ↗</a></div>' +
     cards + "</div>";
   out = out.replace(
     /<div class="menu-source-grid">[\s\S]*?<\/div>\s*<div class="verified-menu">/,
