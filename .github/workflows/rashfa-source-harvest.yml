@@ -52,6 +52,7 @@ jobs:
         run: |
           node /tmp/rashfa-harvester/node_modules/playwright/cli.js --version
           node tooling/scripts/harvest-rashfa.mjs "$GITHUB_WORKSPACE/site"
+          node tooling/scripts/publish-rashfa-inline.mjs "$GITHUB_WORKSPACE/site"
 
       - name: Publish verified harvest
         working-directory: site
