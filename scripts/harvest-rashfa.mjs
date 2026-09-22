@@ -23,7 +23,7 @@ const manifest = {
   harvested_at: new Date().toISOString(),
   policy: { exact_source_only: true, no_guessing: true },
   instagram: { status: "not_extracted", media: [] },
-  talabat: { status: "not_extracted", restaurant_url: null, categories: [], items: [], page_text_sample: "" },
+  talabat: { status: "not_extracted", restaurant_url: null, categories: [], items: [], best_sellers: [], page_text_sample: "" },
   local_assets: { instagram: [], menu: [] }
 };
 
@@ -94,7 +94,7 @@ try {
     });
     for (const url of urls.slice(0, 40)) {
       const saved = await saveImage(request, url, igDir, "ig");
-      if (saved) manifest.instagram.media.push(saved);
+      if (/static\.cdninstagram\.com|rsrc\.php/i.test(url)) continue;\n      if (saved) manifest.instagram.media.push(saved);
       if (manifest.instagram.media.length >= 24) break;
     }
     manifest.instagram.status = manifest.instagram.media.length ? "extracted" : "blocked_or_no_media";
