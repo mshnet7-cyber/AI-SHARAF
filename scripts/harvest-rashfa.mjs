@@ -138,7 +138,31 @@ try {
           await tb.goto(candidate, { waitUntil: "domcontentloaded", timeout: 30000 });
           await tb.waitForTimeout(2500);
           const title = clean(await tb.title());
-          const body = clean(await tb.locator("body").innerText());
+          await tb.getByText(/Show menu/i).first().click({ timeout: 10000 }).catch(() => {});
+      await tb.waitForTimeout(2000);
+      const inputs = tb.locator("input");
+      const inputCount = await inputs.count();
+      for (let i = 0; i < inputCount; i++) {
+        const input = inputs.nth(i);
+        const placeholder = String(await input.getAttribute("placeholder") || "");
+        const aria = String(await input.getAttribute("aria-label") || "");
+        if (/(area|street|location|address|منطقة|شارع|موقع)/i.test(placeholder + " " + aria)) {
+          await input.fill("Sohar").catch(() => {});
+          await input.press("Enter").catch(() => {});
+          await tb.waitForTimeout(1800);
+          break;
+        }
+      }
+      for (const label of ["Sohar Sanaiyah", "Sohar", "صحار الصناعية", "صحار"]) {
+        const option = tb.getByText(label, { exact: true }).first();
+        if (await option.count()) {
+          await option.click({ timeout: 5000 }).catch(() => {});
+          await tb.waitForTimeout(1800);
+        }
+      }
+      await tb.getByText(/Show menu/i).first().click({ timeout: 10000 }).catch(() => {});
+      await tb.waitForTimeout(3500);
+      const body = clean(await tb.locator("body").innerText());
           if (/Rashfa\s+wa\s+Khobza/i.test(title + " " + body) && !/404|page not found/i.test(title)) {
             restaurantUrl = candidate;
             break;
