@@ -3,35 +3,24 @@
   "city": "صحار",
   "street": "شارع كشمير",
   "instagram": {
-    "status": "blocked_or_error",
-    "media": [],
-    "error": "page.goto: url: expected string, got object"
+    "status": "blocked_or_no_media",
+    "media": []
   },
   "talabat_directory": "https://www.talabat.com/oman/restaurants/2601/sohar-sanaiyah?page=22",
-  "harvested_at": "2026-09-22T19:09:08.028Z",
+  "harvested_at": "2026-09-22T19:15:14.074Z",
   "policy": {
     "exact_source_only": true,
     "no_guessing": true
   },
   "talabat": {
-    "status": "extracted",
+    "status": "restaurant_page_found_but_items_not_extractable",
     "restaurant_url": "https://www.talabat.com/oman/rashfa-wa-khobza",
     "categories": [
       "Pies",
-      "Beverages",
-      "Pizza",
-      "Breakfast"
+      "Beverages"
     ],
-    "items": [
-      {
-        "source_text": "4.7\n★\n★\n★\n★\n★\n\n4.7\n\n( 100 Ratings )",
-        "price_omr": "4.7"
-      },
-      {
-        "source_text": "4.7\n★\n★\n★\n★\n★\n\n4.7",
-        "price_omr": "4.7"
-      }
-    ]
+    "items": [],
+    "page_text_sample": "Rashfa wa Khobza Pies, Beverages Select your area to see the restaurant menu Show menu 4.7 ★ ★ ★ ★ ★ 4.7 ( 100 Ratings ) Reviews Rashfa wa Khobza delivers to you Their best selling dishes are كينزا كولا, كينزا حمضيات, كينزا كولا دايت and بيبسي, although they have a variety of dishes and meals to choose from like Pies, Beverages. They have been reviewed 100 times by talabat users, with a rating of 4.7. Best Seller Dishes From اختيارات على ذوقك 🔥: كينزا كولا From اختيارات على ذوقك 🔥: كينزا حمضيات From اختيارات على ذوقك 🔥: كينزا كولا دايت From اختيارات على ذوقك 🔥: بيبسي Rashfa wa Khobza Reviews 4.7 ★ ★ ★ ★ ★ 4.7 Amazing unknown 16 September 2026 ما شاء الله كل شئ بيرفكت Amazing kaml 16 September 2026 ممتاز الاكل لذيذ واتمنى دائماً تنتبهوا للملاحظات ، الي نكتبها تحت كل طلب ، وشكراً لكم Amazing kaml 10 September 2026 الشاي كان فيه كثير طعم هيل وانا م اخب الهيل ف الشاي + م فيه سكر ، يعني نوعاً ما لابأس بفطيره الحلوم Good HAWRAA 08 September 2026 الكرك سكري اكثر .. يجب تقليل نسبة السكر قليلاً Read More Corporate Careers Terms and Conditions FAQ Privacy Policy Contact Us Sitemap Restaurants Burger King Domino's Pizza Pizza Hut Chowpatty Irani House Restaurant More Restaurants... Popular Cuisines Chinese Breakfast Burgers Indian Iranian More Cuisines... Popular Areas Bawshar Al Khuwayr North Khuwair 33 Ghubrah Janubiyyah Al Ghubra Ash Shamaliyyah More Areas... Cities Al Khabourah Al Suwayq Amerat Bahla Barka More Cities... Follow us on For any support or help you can contact us via our Live Chat ©2026 talabat.com Contact Us"
   },
   "local_assets": {
     "instagram": [],
