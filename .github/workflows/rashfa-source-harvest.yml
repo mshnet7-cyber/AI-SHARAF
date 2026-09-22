@@ -59,7 +59,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add rashfa-wa-khubza-live/assets rashfa-wa-khubza-live/data/rashfa-menu-reconciliation.json
+          git add rashfa-wa-khubza-live/index.html rashfa-wa-khubza-live/assets rashfa-wa-khubza-live/data/rashfa-menu-reconciliation.json
           if git diff --cached --quiet; then
             echo "No verified source changes to publish."
             exit 0
