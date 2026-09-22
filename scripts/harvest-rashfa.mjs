@@ -153,6 +153,27 @@ try {
       restaurantUrl = hrefs[0]?.href || null;
     }
 
+    if (!restaurantUrl) {
+      const candidates = [
+        "https://www.talabat.com/oman/rashfa-wa-khobza",
+        "https://www.talabat.com/oman/rashfa-wa-khubza",
+        "https://www.talabat.com/oman/rashfa-wa-khobza-sohar",
+        "https://www.talabat.com/oman/rashfa-wa-khubza-sohar"
+      ];
+      for (const candidate of candidates) {
+        try {
+          await talabat.goto(candidate, { waitUntil: "domcontentloaded", timeout: 30000 });
+          await talabat.waitForTimeout(2500);
+          const title = clean(await talabat.title());
+          const text = clean(await talabat.locator("body").innerText());
+          if (/Rashfa\\s+wa\\s+Khobza/i.test(title + " " + text) && !/404|page not found|not found/i.test(title)) {
+            restaurantUrl = candidate;
+            break;
+          }
+        } catch {}
+      }
+    }
+
     if (restaurantUrl) {
       manifest.talabat.restaurant_url = restaurantUrl;
     }
