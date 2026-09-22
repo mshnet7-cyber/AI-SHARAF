@@ -71,7 +71,7 @@ const request = context.request;
 try {
   const ig = await context.newPage();
   try {
-    await ig.goto(manifest.instagram, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await ig.goto("https://www.instagram.com/rashfeh_khubze/", { waitUntil: "domcontentloaded", timeout: 60000 });
     await ig.waitForTimeout(6000);
     for (let i = 0; i < 5; i++) {
       await ig.mouse.wheel(0, 1800);
