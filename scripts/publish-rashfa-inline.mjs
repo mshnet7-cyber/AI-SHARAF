@@ -19,7 +19,7 @@ const html = await fs.readFile(indexPath, "utf8");
 const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
 const igDir = path.join(root, "assets", "instagram");
 const menuDir = path.join(root, "assets", "menu");
-const igFiles = (await fs.readdir(igDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 6);
+if (!Array.isArray(manifest?.instagram?.media) || manifest.instagram.media.length === 0) {\n  for (const f of await fs.readdir(igDir)) await fs.rm(path.join(igDir, f), { force: true });\n}\nconst igFiles = (await fs.readdir(igDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 6);
 const menuFiles = (await fs.readdir(menuDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 8);
 let out = html;
 
@@ -39,9 +39,9 @@ if (igFiles.length) {
 }
 
 const items = Array.isArray(manifest?.talabat?.items) ? manifest.talabat.items : [];
-const usableItems = items.filter(x => x && x.price_omr && x.source_text && !/Rashfa\s+wa\s+Khobza/i.test(x.source_text)).slice(0, 60);
-if (usableItems.length) {
-  const cards = usableItems.map((item, index) => {
+const usableItems = items.filter(x => x && x.price_omr && x.source_text && !/Rashfa\s+wa\s+Khobza/i.test(x.source_text)).slice(0, 60);\nconst bestSellers = Array.isArray(manifest?.talabat?.best_sellers) ? manifest.talabat.best_sellers.filter(Boolean).slice(0, 12) : [];
+if (usableItems.length || bestSellers.length) {\n  const sourceItems = usableItems.length ? usableItems.map((item, index) => {\n    const lines = String(item.source_text).split(/\\n+/).map(s => s.trim()).filter(Boolean);\n    return { name: lines[0] || ("صنف " + (index + 1)), description: lines.slice(1).join(" · "), price: String(item.price_omr).replace(/^OMR\\s*/i, "") };\n  }) : bestSellers.map(name => ({ name, description: "ظاهر علنًا ضمن الأصناف الأكثر مبيعًا على طلبات.", price: "غير ظاهر علنًا" }));
+  const cards = sourceItems.map((item, index) => {
     const lines = String(item.source_text).split(/\n+/).map(s => s.trim()).filter(Boolean);
     const name = lines[0] || ("صنف " + (index + 1));
     const description = lines.slice(1).join(" · ");
