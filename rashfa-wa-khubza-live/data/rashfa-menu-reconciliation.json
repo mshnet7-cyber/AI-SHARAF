@@ -3,11 +3,24 @@
   "city": "صحار",
   "street": "شارع كشمير",
   "instagram": {
-    "status": "blocked_or_no_media",
-    "media": []
+    "status": "extracted",
+    "media": [
+      {
+        "file": "assets/instagram/ig-4330cecbc742b88b.webp",
+        "source_url": "https://static.cdninstagram.com/rsrc.php/yN/r/-erGonz07kB.webp",
+        "content_type": "image/webp",
+        "bytes": 576680
+      },
+      {
+        "file": "assets/instagram/ig-958d202f62cf8c67.png",
+        "source_url": "https://static.cdninstagram.com/rsrc.php/v4/yD/r/R0fBIMurK8v.png",
+        "content_type": "image/png",
+        "bytes": 778568
+      }
+    ]
   },
   "talabat_directory": "https://www.talabat.com/oman/restaurants/2601/sohar-sanaiyah?page=22",
-  "harvested_at": "2026-09-22T19:15:14.074Z",
+  "harvested_at": "2026-09-22T19:17:01.386Z",
   "policy": {
     "exact_source_only": true,
     "no_guessing": true
@@ -20,10 +33,13 @@
       "Beverages"
     ],
     "items": [],
-    "page_text_sample": "Rashfa wa Khobza Pies, Beverages Select your area to see the restaurant menu Show menu 4.7 ★ ★ ★ ★ ★ 4.7 ( 100 Ratings ) Reviews Rashfa wa Khobza delivers to you Their best selling dishes are كينزا كولا, كينزا حمضيات, كينزا كولا دايت and بيبسي, although they have a variety of dishes and meals to choose from like Pies, Beverages. They have been reviewed 100 times by talabat users, with a rating of 4.7. Best Seller Dishes From اختيارات على ذوقك 🔥: كينزا كولا From اختيارات على ذوقك 🔥: كينزا حمضيات From اختيارات على ذوقك 🔥: كينزا كولا دايت From اختيارات على ذوقك 🔥: بيبسي Rashfa wa Khobza Reviews 4.7 ★ ★ ★ ★ ★ 4.7 Amazing unknown 16 September 2026 ما شاء الله كل شئ بيرفكت Amazing kaml 16 September 2026 ممتاز الاكل لذيذ واتمنى دائماً تنتبهوا للملاحظات ، الي نكتبها تحت كل طلب ، وشكراً لكم Amazing kaml 10 September 2026 الشاي كان فيه كثير طعم هيل وانا م اخب الهيل ف الشاي + م فيه سكر ، يعني نوعاً ما لابأس بفطيره الحلوم Good HAWRAA 08 September 2026 الكرك سكري اكثر .. يجب تقليل نسبة السكر قليلاً Read More Corporate Careers Terms and Conditions FAQ Privacy Policy Contact Us Sitemap Restaurants Burger King Domino's Pizza Pizza Hut Chowpatty Irani House Restaurant More Restaurants... Popular Cuisines Chinese Breakfast Burgers Indian Iranian More Cuisines... Popular Areas Bawshar Al Khuwayr North Khuwair 33 Ghubrah Janubiyyah Al Ghubra Ash Shamaliyyah More Areas... Cities Al Khabourah Al Suwayq Amerat Bahla Barka More Cities... Follow us on For any support or help you can contact us via our Live Chat ©2026 talabat.com Contact Us"
+    "page_text_sample": "Rashfa wa Khobza Pies, Beverages Select your area to see the restaurant menu Enter your full delivery address Sohar Sohar, Oman Sohar Port Sohar Port, Liwa, Oman Sohar Beach Corniche Sohar Beach Corniche, Al Bahri Road, Sohar, Oman Sohar Airport Sohar Airport, Sohar, Oman Sohar University Sohar University, Al Jamiah Street، Sohar, Oman Show menu 4.7 ★ ★ ★ ★ ★ 4.7 ( 100 Ratings ) Reviews Rashfa wa Khobza delivers to you Their best selling dishes are كينزا كولا, كينزا حمضيات, كينزا كولا دايت and بيبسي, although they have a variety of dishes and meals to choose from like Pies, Beverages. They have been reviewed 100 times by talabat users, with a rating of 4.7. Best Seller Dishes From اختيارات على ذوقك 🔥: كينزا كولا From اختيارات على ذوقك 🔥: كينزا حمضيات From اختيارات على ذوقك 🔥: كينزا كولا دايت From اختيارات على ذوقك 🔥: بيبسي Rashfa wa Khobza Reviews 4.7 ★ ★ ★ ★ ★ 4.7 Amazing unknown 16 September 2026 ما شاء الله كل شئ بيرفكت Amazing kaml 16 September 2026 ممتاز الاكل لذيذ واتمنى دائماً تنتبهوا للملاحظات ، الي نكتبها تحت كل طلب ، وشكراً لكم Amazing kaml 10 September 2026 الشاي كان فيه كثير طعم هيل وانا م اخب الهيل ف الشاي + م فيه سكر ، يعني نوعاً ما لابأس بفطيره الحلوم Good HAWRAA 08 September 2026 الكرك سكري اكثر .. يجب تقليل نسبة السكر قليلاً Read More Corporate Careers Terms and Conditions FAQ Privacy Policy Contact Us Sitemap Restaurants Burger King Domino's Pizza Pizza Hut Chowpatty Irani House Restaurant More Restaurants... Popular Cuisines Chinese Breakfast Burgers Indian Iranian More Cuisines... Popular Areas Bawshar Al Khuwayr North Khuwair 33 Ghubrah Janubiyyah Al Ghubra Ash Shamaliyyah More Areas... Cities Al Khabourah Al Suwayq Amerat Bahla Barka More Cities... Follow us on For any support or help you can contact us via our Live Chat ©2026 talabat.com Contact Us Delivery Address Move the map to match the pin to your exact delivery location Keyboard shortcuts Map data ©2026 Terms Report a map error Deliver Here"
   },
   "local_assets": {
-    "instagram": [],
+    "instagram": [
+      "assets/instagram/ig-4330cecbc742b88b.webp",
+      "assets/instagram/ig-958d202f62cf8c67.png"
+    ],
     "menu": [
       "assets/menu/menu-7dd38f8ee5dbd98a.jpg",
       "assets/menu/menu-b50206ef0e503450.jpg",
@@ -32,7 +48,17 @@
       "assets/menu/menu-2bc25a2776ce35b5.jpg",
       "assets/menu/menu-e9b70e3bd2d70ed6.jpg",
       "assets/menu/menu-244188ae8fc34b42.jpg",
-      "assets/menu/menu-555459f3f8f35871.jpg"
+      "assets/menu/menu-555459f3f8f35871.jpg",
+      "assets/menu/menu-902ef950b9120325.webp",
+      "assets/menu/menu-eec2f60af3f43838.webp",
+      "assets/menu/menu-be03f13490b35688.webp",
+      "assets/menu/menu-f8e87eb0a8bc217a.webp",
+      "assets/menu/menu-64b1cb6e776d73fe.webp",
+      "assets/menu/menu-892c9c2090c773c3.webp",
+      "assets/menu/menu-36b321b67dd8b37c.webp",
+      "assets/menu/menu-17407c2a24e74e6d.webp",
+      "assets/menu/menu-8c92afb3048286e9.webp",
+      "assets/menu/menu-229a2f729b4b4f6e.webp"
     ]
   }
 }
