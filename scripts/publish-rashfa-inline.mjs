@@ -79,10 +79,12 @@ if (usableItems.length || bestSellers.length) {
     '</span><a class="btn secondary" href="https://www.talabat.com/oman/restaurants/2601/sohar-sanaiyah?page=22" target="_blank" rel="noopener noreferrer">طلبات ↗</a></div>' +
     cards + "</div>";
 
-  out = out.replace(
-    /<div class="menu-source-grid">[\s\S]*?<\/div>\s*<div class="verified-menu">/,
-    localMenu + '<div class="verified-menu">'
-  );
+  const menuPattern = /<div class="menu-source-grid">[\s\S]*?<\/div>\s*<div class="verified-menu">/;
+  if (menuPattern.test(out)) {
+    out = out.replace(menuPattern, localMenu + '<div class="verified-menu">');
+  } else {
+    out = out.replace('<div class="verified-menu">', localMenu + '<div class="verified-menu">');
+  }
 }
 
 if (menuFiles.length) {
