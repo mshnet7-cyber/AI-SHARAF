@@ -7,14 +7,39 @@ on:
     branches:
       - deploy/rashfa-wa-khubza-live-v2
 permissions:
-  contents: read
+  contents: write
 jobs:
   qa:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - name: Run HTML QA
         run: node scripts/qa-rashfa.mjs
+      - name: Install browser harvester
+        run: |
+          mkdir -p /tmp/rashfa-harvester
+          cd /tmp/rashfa-harvester
+          npm init -y
+          npm install --no-audit --no-fund playwright@latest
+          npx playwright install --with-deps chromium
+      - name: Harvest verified public source assets
+        run: node scripts/harvest-rashfa.mjs "$GITHUB_WORKSPACE"
+      - name: Publish harvested assets into static HTML
+        run: node scripts/publish-rashfa-inline.mjs "$GITHUB_WORKSPACE"
+      - name: Commit only verified harvest changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rashfa-wa-khubza-live/index.html rashfa-wa-khubza-live/assets rashfa-wa-khubza-live/data/rashfa-menu-reconciliation.json
+          if git diff --cached --quiet; then
+            echo "No verified source changes to publish."
+            exit 0
+          fi
+          git commit -m "chore(rashfa): refresh verified source assets"
+          git push origin HEAD:deploy/rashfa-wa-khubza-live-v2
