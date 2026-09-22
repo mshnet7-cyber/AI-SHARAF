@@ -1,0 +1,20 @@
+name: Rashfa wa Khubza QA
+on:
+  push:
+    branches:
+      - deploy/rashfa-wa-khubza-live-v2
+  pull_request:
+    branches:
+      - deploy/rashfa-wa-khubza-live-v2
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run HTML QA
+        run: node scripts/qa-rashfa.mjs
