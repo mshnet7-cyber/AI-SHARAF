@@ -152,7 +152,8 @@ try {
     } else {
       manifest.talabat.restaurant_url = restaurantUrl;
       const body = clean(await tb.locator("body").innerText());
-      manifest.talabat.categories = ["Pies", "Beverages"];\n      manifest.talabat.page_text_sample = body.slice(0, 8000);
+      manifest.talabat.categories = ["Pies", "Beverages"];
+      manifest.talabat.page_text_sample = body.slice(0, 8000);
 
       const candidates = await tb.locator("body *").evaluateAll(elements => {
         const rows = [];
