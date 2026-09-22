@@ -2,7 +2,7 @@ name: Rashfa Source Harvest
 
 on:
   push:
-    branches: [main]
+    branches: [main, deploy/rashfa-wa-khubza-live-v2]
   workflow_dispatch:
   schedule:
     - cron: "17 3 * * *"
