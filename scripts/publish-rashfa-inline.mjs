@@ -25,8 +25,11 @@ if (!Array.isArray(manifest?.instagram?.media) || manifest.instagram.media.lengt
 }
 
 const igFiles = (await fs.readdir(igDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 6);
-const menuFiles = (await fs.readdir(menuDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 8);
+const menuFiles = (await fs.readdir(menuDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 4);
 let out = html;
+out = out.replace(/<div class="local-menu">[\s\S]*?(?=<div class="local-menu-gallery|<div class="verified-menu">)/, "");
+out = out.replace(/<div class="local-menu-gallery">[\s\S]*?(?=<div class="verified-menu">)/, "");
+out = out.replace(/<div class="local-gallery">[\s\S]*?(?=<div class="instagram-fallback">)/, "");
 
 if (igFiles.length) {
   const cards = [];
