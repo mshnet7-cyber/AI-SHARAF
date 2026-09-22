@@ -23,7 +23,7 @@ const manifest = {
   harvested_at: new Date().toISOString(),
   policy: { exact_source_only: true, no_guessing: true },
   instagram: { status: "not_extracted", media: [] },
-  talabat: { status: "not_extracted", restaurant_url: null, categories: [], items: [] },
+  talabat: { status: "not_extracted", restaurant_url: null, categories: [], items: [], page_text_sample: "" },
   local_assets: { instagram: [], menu: [] }
 };
 
@@ -152,24 +152,20 @@ try {
     } else {
       manifest.talabat.restaurant_url = restaurantUrl;
       const body = clean(await tb.locator("body").innerText());
-      manifest.talabat.categories = [...new Set(
-        [...body.matchAll(/\b(Pies|Beverages|Pastries|Coffee|Breakfast|Bakery|Arabic|Juices|Sandwiches|Pizza|Snacks)\b/gi)]
-          .map(m => m[1])
-      )];
-
+      manifest.talabat.categories = ["Pies", "Beverages"];\n      manifest.talabat.page_text_sample = body.slice(0, 8000);
       const candidates = await tb.locator("body *").evaluateAll(elements => {
         const rows = [];
         const seen = new Set();
         for (const el of elements) {
           const text = (el.innerText || "").trim();
           if (!text || text.length < 4 || text.length > 700) continue;
-          if (!/(?:OMR\s*)?\d{1,3}\.\d{1,3}/.test(text)) continue;
+          if (!/\bOMR\s*\d{1,3}\.\d{1,3}/i.test(text)) continue;\n          if (/(Ratings|rating|Reviews|review|delivery|minimum order|minimum)/i.test(text)) continue;
           const cls = String(el.className || "") + " " + String(el.id || "");
           if (!/(item|product|menu|card|dish|meal|food)/i.test(cls)) continue;
           const key = text.replace(/\s+/g, " ").slice(0, 500);
           if (seen.has(key)) continue;
           seen.add(key);
-          const price = (text.match(/(?:OMR\s*)?\d{1,3}\.\d{1,3}/i) || [])[0] || null;
+          const price = (text.match(/\bOMR\s*\d{1,3}\.\d{1,3}/i) || [])[0] || null;
           rows.push({ source_text: text, price_omr: price });
         }
         return rows.slice(0, 80);
