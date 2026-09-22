@@ -1,116 +1,31 @@
 #!/usr/bin/env node
 import fs from "node:fs/promises";
 import path from "node:path";
-
-const target = path.resolve(process.argv[2] || ".");
-const root = path.join(target, "rashfa-wa-khubza-live");
-const indexPath = path.join(root, "index.html");
-const manifestPath = path.join(root, "data", "rashfa-menu-reconciliation.json");
-const escapeHtml = s => String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
-
-async function dataUri(file) {
-  const ext = path.extname(file).toLowerCase();
-  const mime = ext === ".webp" ? "image/webp" : ext === ".png" ? "image/png" : ext === ".avif" ? "image/avif" : "image/jpeg";
-  const body = await fs.readFile(file);
-  return "data:" + mime + ";base64," + body.toString("base64");
-}
-
-const html = await fs.readFile(indexPath, "utf8");
-const manifest = JSON.parse(await fs.readFile(manifestPath, "utf8"));
-const igDir = path.join(root, "assets", "instagram");
-const menuDir = path.join(root, "assets", "menu");
-
-if (!Array.isArray(manifest?.instagram?.media) || manifest.instagram.media.length === 0) {
-  for (const file of await fs.readdir(igDir)) await fs.rm(path.join(igDir, file), { force: true });
-}
-
-const igFiles = (await fs.readdir(igDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 6);
-const menuFiles = (await fs.readdir(menuDir)).filter(f => /\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0, 4);
-let out = html;
-out = out.replace(/<div class="local-menu">[\s\S]*?(?=<div class="local-menu-gallery|<div class="verified-menu">)/, "");
-out = out.replace(/<div class="local-menu-gallery">[\s\S]*?(?=<div class="verified-menu">)/, "");
-out = out.replace(/<div class="local-gallery">[\s\S]*?(?=<div class="instagram-fallback">)/, "");
-
-if (igFiles.length) {
-  const cards = [];
-  for (const file of igFiles) {
-    cards.push(
-      '<figure class="local-photo"><img src="' + await dataUri(path.join(igDir, file)) +
-      '" alt="صورة أصلية من حساب رشفة وخبزة الرسمي" loading="lazy"><figcaption>من الحساب الرسمي @rashfeh_khubze</figcaption></figure>'
-    );
-  }
-  const gallery = '<div class="local-gallery" aria-label="معرض الصور الأصلي">' + cards.join("") + "</div>";
-  out = out.replace(
-    /<div class="instagram-embed">[\s\S]*?<\/div>\s*<div class="instagram-fallback">/,
-    gallery + '<div class="instagram-fallback">'
-  );
-}
-
-const items = Array.isArray(manifest?.talabat?.items) ? manifest.talabat.items : [];
-const usableItems = items.filter(x => x && x.price_omr && x.source_text && !/Rashfa\s+wa\s+Khobza/i.test(x.source_text)).slice(0, 60);
-const bestSellers = Array.isArray(manifest?.talabat?.best_sellers) ? manifest.talabat.best_sellers.filter(Boolean).slice(0, 12) : [];
-
-if (usableItems.length || bestSellers.length) {
-  const sourceItems = usableItems.length
-    ? usableItems.map((item, index) => {
-        const lines = String(item.source_text).split(/\n+/).map(s => s.trim()).filter(Boolean);
-        return {
-          name: lines[0] || ("صنف " + (index + 1)),
-          description: lines.slice(1).join(" · "),
-          price: String(item.price_omr).replace(/^OMR\s*/i, "")
-        };
-      })
-    : bestSellers.map(name => ({
-        name,
-        description: "ظاهر علنًا ضمن الأصناف الأكثر مبيعًا على طلبات.",
-        price: "غير ظاهر علنًا"
-      }));
-
-  const cards = sourceItems.map(item =>
-    '<article class="menu-item-local"><div><div class="menu-item-name">' +
-    escapeHtml(item.name) + '</div>' +
-    (item.description ? '<p>' + escapeHtml(item.description) + '</p>' : '') +
-    '</div><strong>' + escapeHtml(item.price) + ' ر.ع.</strong></article>'
-  ).join("");
-
-  const heading = usableItems.length ? "القائمة المستخرجة من صفحة المطعم" : "الأصناف الظاهرة علنًا";
-  const localMenu =
-    '<div class="local-menu"><div class="local-menu-head"><span>' + heading +
-    '</span><a class="btn secondary" href="https://www.talabat.com/oman/restaurants/2601/sohar-sanaiyah?page=22" target="_blank" rel="noopener noreferrer">طلبات ↗</a></div>' +
-    cards + "</div>";
-
-  const menuPattern = /<div class="menu-source-grid">[\s\S]*?<\/div>\s*<div class="verified-menu">/;
-  if (menuPattern.test(out)) {
-    out = out.replace(menuPattern, localMenu + '<div class="verified-menu">');
-  } else {
-    out = out.replace('<div class="verified-menu">', localMenu + '<div class="verified-menu">');
-  }
-}
-
-if (menuFiles.length) {
-  const cards = [];
-  for (const file of menuFiles) {
-    cards.push(
-      '<figure class="local-photo"><img src="' + await dataUri(path.join(menuDir, file)) +
-      '" alt="صورة من قائمة رشفة وخبزة على طلبات" loading="lazy"><figcaption>صورة من مصدر طلبات</figcaption></figure>'
-    );
-  }
-  const gallery = '<div class="local-menu-gallery" aria-label="صور القائمة من طلبات">' + cards.join("") + "</div>";
-  out = out.replace(/<div class="verified-menu">/, gallery + '<div class="verified-menu">');
-}
-
-if (igFiles.length || menuFiles.length || usableItems.length || bestSellers.length) {
-  out = out.replace(
-    "</style>",
-    '.local-gallery,.local-menu-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}.local-photo{margin:0;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--white)}.local-photo img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}.local-photo figcaption{padding:10px 13px;color:#6b675e;font-size:.78rem;font-weight:800}.local-menu{margin-top:30px;border:1px solid var(--line);border-radius:26px;overflow:hidden;background:var(--white)}.local-menu-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 22px;background:var(--card);font-weight:900}.menu-item-local{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 22px;border-top:1px solid var(--line)}.menu-item-name{font-weight:900;font-size:1.08rem}.menu-item-local p{margin:5px 0 0;color:#6b675e;font-size:.92rem}.menu-item-local>strong{white-space:nowrap;font-size:1rem}@media(max-width:900px){.local-gallery,.local-menu-gallery{grid-template-columns:1fr 1fr}.local-menu-head{align-items:flex-start;flex-direction:column}}@media(max-width:520px){.local-gallery,.local-menu-gallery{grid-template-columns:1fr}.menu-item-local{align-items:flex-start;flex-direction:column;gap:8px}}' +
-    "</style>"
-  );
-}
-
-await fs.writeFile(indexPath, out, "utf8");
-console.log(JSON.stringify({
-  instagram_images: igFiles.length,
-  menu_images: menuFiles.length,
-  menu_items: usableItems.length,
-  best_sellers: bestSellers.length
-}, null, 2));
+const target=path.resolve(process.argv[2]||".");
+const root=path.join(target,"rashfa-wa-khubza-live");
+const indexPath=path.join(root,"index.html");
+const manifestPath=path.join(root,"data","rashfa-menu-reconciliation.json");
+const esc=s=>String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+async function dataUri(file){const ext=path.extname(file).toLowerCase();const mime=ext===".webp"?"image/webp":ext===".png"?"image/png":"image/jpeg";return "data:"+mime+";base64:"+(await fs.readFile(file)).toString("base64");}
+const html=await fs.readFile(indexPath,"utf8");
+const manifest=JSON.parse(await fs.readFile(manifestPath,"utf8"));
+const menuDir=path.join(root,"assets","menu");
+const menuFiles=(await fs.readdir(menuDir)).filter(f=>/\.(jpe?g|png|webp|avif)$/i.test(f)).sort().slice(0,18);
+const pies=[
+["فطيرة دجاج طازج","Fresh Chicken Pie","فطيرة دجاج طازج",0.800],["فطيرة بطاطس عمان تشيبس","Oman Chips with Cheese Pie","فطيرة بطاطس عمان تشيبس",0.500],["فطيرة شكشوكة وجبن","Shakshuka with Cheese Pie","فطيرة شكشوكة مع جبن",0.500],["فطيرة بيض مسلوق وجبن","Boiled Egg with Cheese Pie","فطيرة بيض مسلوق مع جبن",0.400],["فطيرة بيض سادة","Plain Egg Pie","فطيرة بيض سادة",0.400],["فطيرة كبدة وجبن","Liver with Cheese Pie","فطيرة كبدة مع جبن",0.800],["فطيرة كبدة","Liver Pie","فطيرة كبدة",0.700],["فطيرة تونة","Tuna Pie","فطيرة تونة",0.600],["فطيرة عسل وجبن","Honey & Cheese Pie","فطيرة عسل وجبن",0.500],["فطيرة حلوم","Halloumi Pie","فطيرة حلوم",0.800],["فطيرة لحم رشفة","Meat Rashfa Pie","فطيرة لحم رشفة",1.000],["فطيرة جبن كريمة","Cream Cheese Pie","فطيرة جبن كريمة",0.400],["فطيرة فلافل","Falafel Pie","فطيرة فلافل",0.700],["فطيرة نوتيلا وفول سوداني","Nutella & Peanut Butter Pie","فطيرة نوتيلا وفول سوداني",0.600],["فطيرة زيتون وجبن","Olive Cheese Pie","فطيرة زيتون وجبن",0.400]];
+const drinks=[["شاي بيري","Berry Tea",0.400],["شاي رمان","Pomegranate Tea",0.400],["شاي كرك","Karak Tea",0.300],["شاي أحمر","Red Tea",0.200],["عصير الربيع","Al Rabie Juice",0.100],["ماء","Water",0.100],["كينزا حمضيات","Kinza Citrus",0.300],["ديو","Dew",0.300],["بيبسي","Pepsi",0.300],["عصير برتقال طازج","Fresh Orange Juice",0.900]];
+const diet=[["كينزا كولا دايت","Kinza Cola Diet",0.300],["كينزا حمضيات","Kinza Citrus",0.300],["بيبسي دايت","Pepsi Diet",0.300]];
+const boxes=[["بوكس شاي كرك","Karak Tea Box",1.500],["بوكس شاي رمان","Pomegranate Tea Box",2.000]];
+const uris=[];for(const file of menuFiles)uris.push(await dataUri(path.join(menuDir,file)));
+let out=html;
+const heroUri=uris[0]||"";
+const hero='<div class="rf-heroVisual" data-hero>'+(heroUri?'<img src="'+heroUri+'" alt="رشفة وخبزة — صورة من المنيو الرسمية" fetchpriority="high">':"")+'<div class="rf-badge"><div><strong>رشفة وخبزة</strong><br><span>صور محلية من مواد المصدر</span></div><a class="rf-btn rf-primary" href="#photos">شاهد الصور</a></div></div>';
+out=out.replace(/<div class="rf-heroVisual" data-hero>[\s\S]*?<\/div>\s*<\/section>/,hero+"</section>");
+const galleryCards=menuFiles.slice(0,6).map((file,i)=>'<figure class="rf-photo"><img src="'+uris[i]+'" alt="رشفة وخبزة — صورة من المصدر" loading="lazy"><figcaption>صورة أصلية من مواد القائمة</figcaption></figure>').join("");
+out=out.replace('<div class="rf-gallery" id="aboutGallery"></div>',galleryCards).replace('<div class="rf-gallery" id="gallery"></div>',galleryCards);
+const pieCards=pies.map((item,i)=>'<article class="rf-menuCard">'+(uris[i]?'<img src="'+uris[i]+'" alt="'+esc(item[0])+'" loading="lazy">':"")+'<div class="rf-menuBody"><div class="rf-menuName">'+esc(item[0])+'</div><div class="rf-menuEn">'+esc(item[1])+'</div><div class="rf-menuDesc">'+esc(item[2])+'</div><div class="rf-price">'+item[3].toFixed(3)+' <small>ر.ع.</small></div></div></article>').join("");
+const compact=arr=>arr.map(x=>'<article class="rf-compact"><strong>'+esc(x[0])+'</strong><span>'+esc(x[1])+'</span><strong>'+x[2].toFixed(3)+' ر.ع.</strong></article>').join("");
+const menuHtml='<div class="rf-tabs"><span class="rf-tab active">الفطائر</span><span class="rf-tab">المشروبات</span><span class="rf-tab">المشروبات الدايت</span><span class="rf-tab">البوكسات</span></div><div class="rf-menuGrid">'+pieCards+'</div><div class="rf-group"><h3 class="rf-groupTitle">المشروبات</h3><div class="rf-compactGrid">'+compact(drinks)+'</div></div><div class="rf-group"><h3 class="rf-groupTitle">المشروبات الدايت</h3><div class="rf-compactGrid">'+compact(diet)+'</div></div><div class="rf-group"><h3 class="rf-groupTitle">البوكسات</h3><div class="rf-compactGrid">'+compact(boxes)+'</div></div><div class="rf-source">المصدر البصري للمنيو: المواد التي تم توفيرها للمشروع، مع رابط التشغيل المباشر إلى <a href="https://www.talabat.com/oman/restaurants/2601/sohar-sanaiyah?page=22" target="_blank" rel="noopener noreferrer">طلبات ↗</a>. الأسعار المعروضة هنا هي الأسعار الظاهرة في صورة المنيو التي تم توفيرها.</div>';
+out=out.replace('<div class="rf-menuShell" id="menuContent"></div>','<div class="rf-menuShell" id="menuContent">'+menuHtml+'</div>');
+await fs.writeFile(indexPath,out,"utf8");
+console.log(JSON.stringify({local_menu_images:menuFiles.length,pies:pies.length,drinks:drinks.length,diet:diet.length,boxes:boxes.length},null,2));
