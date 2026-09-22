@@ -1,0 +1,67 @@
+name: Rashfa Source Harvest
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+      timezone: "Asia/Muscat"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rashfa-source-harvest
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tooling
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          path: tooling
+          fetch-depth: 0
+
+      - name: Checkout live site branch
+        uses: actions/checkout@v7
+        with:
+          ref: deploy/rashfa-wa-khubza-live-v2
+          path: site
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install browser harvester
+        working-directory: tooling
+        run: |
+          mkdir -p /tmp/rashfa-harvester
+          cd /tmp/rashfa-harvester
+          npm init -y
+          npm install --no-audit --no-fund playwright@latest
+          npx playwright install --with-deps chromium
+
+      - name: Harvest official public sources
+        run: |
+          node /tmp/rashfa-harvester/node_modules/playwright/cli.js --version
+          node tooling/scripts/harvest-rashfa.mjs "$GITHUB_WORKSPACE/site"
+
+      - name: Publish verified harvest
+        working-directory: site
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add rashfa-wa-khubza-live/assets rashfa-wa-khubza-live/data/rashfa-menu-reconciliation.json
+          if git diff --cached --quiet; then
+            echo "No verified source changes to publish."
+            exit 0
+          fi
+          git commit -m "chore(rashfa): refresh verified source assets"
+          git push origin HEAD:deploy/rashfa-wa-khubza-live-v2
