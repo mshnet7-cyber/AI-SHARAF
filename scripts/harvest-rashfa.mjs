@@ -160,7 +160,8 @@ try {
         for (const el of elements) {
           const text = (el.innerText || "").trim();
           if (!text || text.length < 4 || text.length > 700) continue;
-          if (!/\bOMR\s*\d{1,3}\.\d{1,3}/i.test(text)) continue;\n          if (/(Ratings|rating|Reviews|review|delivery|minimum order|minimum)/i.test(text)) continue;
+          if (!/\bOMR\s*\d{1,3}\.\d{1,3}/i.test(text)) continue;
+          if (/(Ratings|rating|Reviews|review|delivery|minimum order|minimum)/i.test(text)) continue;
           const cls = String(el.className || "") + " " + String(el.id || "");
           if (!/(item|product|menu|card|dish|meal|food)/i.test(cls)) continue;
           const key = text.replace(/\s+/g, " ").slice(0, 500);
