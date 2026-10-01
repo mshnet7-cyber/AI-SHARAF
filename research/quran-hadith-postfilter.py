@@ -11,7 +11,7 @@ STOP=set("""من في عن على إلى اليه به بها له لها ما �
 def norm(s):
     s=s.replace("\\ufeff","")
     s=re.sub(r"[\u064B-\u065F\u0670\u06D6-\u06ED]","",s)
-    s=re.sub(r"[إأآٱ]","ا",s).replace("ى","ي").replace("ؤ","و").replace("ئ","ي").replace("ة","ه").replace("ـ","",s)
+    s=re.sub(r"[إأآٱ]","ا",s).replace("ى","ي").replace("ؤ","و").replace("ئ","ي").replace("ة","ه").replace("ـ","")
     s=re.sub(r"[^\u0600-\u06FF\s]"," ",s)
     return re.sub(r"\s+"," ",s).strip()
 
