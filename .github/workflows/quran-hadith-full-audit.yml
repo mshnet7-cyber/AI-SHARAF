@@ -1,0 +1,33 @@
+name: Quran Hadith Full Audit
+
+on:
+  push:
+    branches:
+      - quran-hadith-full-audit-20261001
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install audit runtime
+        run: npm install --no-save @huggingface/transformers@4.3.0
+
+      - name: Run full Quran-only audit
+        run: node research/quran-hadith-audit.js
+
+      - name: Upload audit results
+        uses: actions/upload-artifact@v4
+        with:
+          name: quran-hadith-full-audit-results
+          path: audit_out/
+          retention-days: 30
