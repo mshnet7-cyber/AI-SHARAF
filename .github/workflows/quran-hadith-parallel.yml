@@ -1,0 +1,54 @@
+name: Quran Hadith Parallel Audit
+
+on:
+  push:
+    branches:
+      - quran-hadith-full-audit-20261001
+
+jobs:
+  audit:
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install --no-save @huggingface/transformers@4.3.0
+      - name: Run shard
+        env:
+          SHARD_INDEX: ${{ matrix.shard }}
+          SHARD_COUNT: 8
+        run: node research/quran-hadith-audit-shard.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quran-audit-part-${{ matrix.shard }}
+          path: audit_out/parts/
+          retention-days: 30
+
+  aggregate:
+    needs: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: quran-audit-part-*
+          path: audit_parts
+          merge-multiple: true
+      - name: Aggregate
+        run: node research/aggregate-quran-audit.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quran-hadith-full-audit-final
+          path: audit_final/
+          retention-days: 90
