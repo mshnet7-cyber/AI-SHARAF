@@ -1,0 +1,35 @@
+name: Quran Hadith Postfilter
+on:
+  push:
+    branches:
+      - quran-hadith-postfilter-20261001
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  refine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download completed audit artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: quran-audit-part-*
+          path: audit_parts
+          merge-multiple: true
+          repository: mshnet7-cyber/AI-SHARAF
+          run-id: 36827651316
+          github-token: ${{ github.token }}
+      - name: Run Quran-only postfilter
+        run: python research/quran-hadith-postfilter.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quran-hadith-refined-final
+          path: audit_refined/
+          retention-days: 90
